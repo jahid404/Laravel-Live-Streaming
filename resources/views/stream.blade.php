@@ -122,7 +122,7 @@
                 video: true,
                 audio: true
             });
-            localVideo.srcObject = stream;
+            localVideo.srcObject = stream;            
 
             streamId = generateStreamId();
             socket.emit('start-stream', {
