@@ -4,8 +4,7 @@ const io = new Server(6001, {
     host: '0.0.0.0',
     cors: {
         origin: [
-            "http://127.0.0.1:8000",
-            "http://192.168.0.168:8000"
+            "http://127.0.0.1:8000"
         ],
         methods: ["GET", "POST"],
         allowedHeaders: ["Content-Type"],
