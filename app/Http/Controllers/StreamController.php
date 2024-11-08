@@ -24,4 +24,3 @@ class StreamController extends Controller
         return view('watch', compact('streamId'));
     }
 }
-
