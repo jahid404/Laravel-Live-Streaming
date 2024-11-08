@@ -9,13 +9,19 @@ class StreamController extends Controller
 {
     public function createStream()
     {
-        $streamId = Str::uuid();  // Generate a unique stream ID
-        return view('stream', compact('streamId'));  // Return the streaming page with the stream ID
+        $streamId = Str::uuid();
+        return view('stream', compact('streamId'));
+    }
+
+    public function createScreenShareStream()
+    {
+        $streamId = Str::uuid();
+        return view('screenshare', compact('streamId'));
     }
 
     public function watchStream($streamId)
     {
-        return view('watch', compact('streamId'));  // Return the watch stream page with the stream ID
+        return view('watch', compact('streamId'));
     }
 }
 
