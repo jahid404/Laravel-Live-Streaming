@@ -119,10 +119,8 @@
                 streamId
             });
 
-            /* const streamUrl =
-                `${window.location.protocol}//${window.location.hostname}:${window.location.port}/stream/${streamId}`; */
             const streamUrl =
-                `http://127.0.0.1:8000/stream/${streamId}`;
+                `${window.location.protocol}//${window.location.hostname}:${window.location.port}/stream/${streamId}`;
             streamUrlButton.href = streamUrl;
             streamUrlButton.style.display = 'inline-block';
 
