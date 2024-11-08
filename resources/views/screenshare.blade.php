@@ -85,7 +85,7 @@
 </head>
 
 <body>
-    <h1>Broadcast Stream with Screen Sharing</h1>
+    <h1>Broadcast Your Stream</h1>
     <video id="local-video" autoplay muted playsinline></video>
 
     <div class="buttons">
