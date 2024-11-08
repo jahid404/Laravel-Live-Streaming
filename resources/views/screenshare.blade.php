@@ -86,6 +86,7 @@
     <button id="start-stream">Start Streaming</button>
     <button id="stop-stream" style="display: none;">Stop Streaming</button>
     <button id="share-screen" style="display: none;">Share Screen</button>
+    <button id="stop-screen-share" style="display: none;">Stop Screen Share</button>
     <a id="stream-url" href="" target="_blank">View Stream</a>
 
     <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
@@ -95,11 +96,13 @@
         const startStreamButton = document.getElementById('start-stream');
         const stopStreamButton = document.getElementById('stop-stream');
         const shareScreenButton = document.getElementById('share-screen');
+        const stopScreenShareButton = document.getElementById('stop-screen-share');
         const streamUrlButton = document.getElementById('stream-url');
 
         let streamId = null;
         let peerConnections = {};
         let mediaStream = null;
+        let screenStream = null;
 
         function resetPeerConnections() {
             for (const viewerId in peerConnections) {
@@ -198,21 +201,18 @@
 
         async function shareScreen() {
             try {
-                const screenStream = await navigator.mediaDevices.getDisplayMedia({
+                screenStream = await navigator.mediaDevices.getDisplayMedia({
                     video: true
                 });
                 localVideo.srcObject = screenStream;
 
                 screenStream.getTracks().forEach(track => {
-                    track.onended = () => {
-                        localVideo.srcObject = mediaStream;
-                        shareScreenButton.disabled = false;
-                        mediaStream.getTracks().forEach(track => updateTrack(track));
-                    };
+                    track.onended = () => stopScreenShare();
                     updateTrack(track);
                 });
 
-                shareScreenButton.disabled = true;
+                shareScreenButton.style.display = 'none';
+                stopScreenShareButton.style.display = 'inline';
             } catch (err) {
                 console.error("Error sharing screen:", err);
             }
@@ -225,10 +225,26 @@
             }
         }
 
+        function stopScreenShare() {
+            if (screenStream) {
+                screenStream.getTracks().forEach(track => track.stop());
+                screenStream = null;
+            }
+            localVideo.srcObject = mediaStream;
+            mediaStream.getTracks().forEach(track => updateTrack(track));
+
+            stopScreenShareButton.style.display = 'none';
+            shareScreenButton.style.display = 'inline';
+        }
+
         function stopBroadcast() {
             if (mediaStream) {
                 mediaStream.getTracks().forEach(track => track.stop());
                 localVideo.srcObject = null;
+            }
+            if (screenStream) {
+                screenStream.getTracks().forEach(track => track.stop());
+                screenStream = null;
             }
             socket.emit('stop-stream', {
                 streamId
@@ -236,6 +252,7 @@
             startStreamButton.style.display = 'inline';
             stopStreamButton.style.display = 'none';
             shareScreenButton.style.display = 'none';
+            stopScreenShareButton.style.display = 'none';
             streamUrlButton.style.display = 'none';
 
             resetPeerConnections();
@@ -244,7 +261,9 @@
         startStreamButton.addEventListener('click', startBroadcast);
         stopStreamButton.addEventListener('click', stopBroadcast);
         shareScreenButton.addEventListener('click', shareScreen);
+        stopScreenShareButton.addEventListener('click', stopScreenShare);
     </script>
 </body>
+
 
 </html>
