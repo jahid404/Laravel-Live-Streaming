@@ -81,7 +81,7 @@
 
 <body>
     <h1>Broadcast Stream</h1>
-    <video id="local-video" autoplay muted playsinline></video>
+    <video id="local-video" autoplay {{-- muted --}} playsinline></video>
 
     <button id="start-stream">Start Streaming</button>
     <button id="stop-stream" style="display: none;">Stop Streaming</button>
@@ -122,7 +122,7 @@
                 video: true,
                 audio: true
             });
-            localVideo.srcObject = stream;            
+            localVideo.srcObject = stream;
 
             streamId = generateStreamId();
             socket.emit('start-stream', {
@@ -177,11 +177,23 @@
                 peerConnections[viewerId].setRemoteDescription(new RTCSessionDescription(answer));
             });
 
-            socket.on('viewer-ice-candidate', ({
+            /* socket.on('viewer-ice-candidate', ({
                 candidate,
                 viewerId
             }) => {
                 peerConnections[viewerId].addIceCandidate(new RTCIceCandidate(candidate));
+            }); */
+            socket.on('viewer-ice-candidate', ({
+                candidate,
+                streamId
+            }) => {
+                if (streams[streamId]) {
+                    io.to(streams[streamId].broadcaster).emit('viewer-ice-candidate', {
+                        candidate,
+                        viewerId: socket.id,
+                        streamId
+                    });
+                }
             });
 
             socket.on('viewer-disconnect', (viewerId) => {

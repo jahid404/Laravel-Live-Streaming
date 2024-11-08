@@ -162,6 +162,14 @@
                 }
             });
 
+            /* socket.on('ice-candidate', ({
+                candidate,
+                streamId: candidateStreamId
+            }) => {
+                if (candidateStreamId === streamId) {
+                    peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+                }
+            }); */
             socket.on('ice-candidate', ({
                 candidate,
                 streamId: candidateStreamId
