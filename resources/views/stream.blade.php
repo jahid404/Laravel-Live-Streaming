@@ -107,6 +107,16 @@
             }
         }
 
+        function generateStreamId() {
+            const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let streamId = '';
+            for (let i = 0; i < 9; i++) {
+                if (i === 3 || i === 6) streamId += '-';
+                streamId += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return streamId;
+        }
+
         async function startBroadcast() {
             const stream = await navigator.mediaDevices.getUserMedia({
                 video: true,
@@ -114,7 +124,7 @@
             });
             localVideo.srcObject = stream;
 
-            streamId = 'stream-' + Date.now();
+            streamId = generateStreamId();
             socket.emit('start-stream', {
                 streamId
             });
