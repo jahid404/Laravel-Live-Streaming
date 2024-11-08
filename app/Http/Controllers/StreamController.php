@@ -16,7 +16,7 @@ class StreamController extends Controller
     public function createScreenShareStream()
     {
         $streamId = Str::uuid();
-        return view('screenshare', compact('streamId'));
+        return view('stream_v2', compact('streamId'));
     }
 
     public function watchStream($streamId)
