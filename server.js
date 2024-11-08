@@ -74,7 +74,6 @@ io.on('connection', (socket) => {
         console.log(`Stream started! Stream URL: ${streamUrl}`);
 
         socket.emit('stream-url', { streamUrl });
-
         socket.broadcast.emit('broadcaster', { streamId });
     });
 
