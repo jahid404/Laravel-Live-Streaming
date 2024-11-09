@@ -86,7 +86,11 @@
 
 <body>
     <h1>Broadcast Your Stream</h1>
-    <video id="local-video" autoplay playsinline></video>
+    <video id="local-video" autoplay playsinline controls></video>
+
+    <div>
+        <span id="stream-timer" style="display: none;">00:00:00</span>
+    </div>
 
     <div class="buttons">
         <button id="start-stream">Start Streaming</button>
@@ -113,6 +117,7 @@
         const toggleVideoButton = document.getElementById('toggle-video');
         const toggleAudioButton = document.getElementById('toggle-audio');
         const streamUrlButton = document.getElementById('stream-url');
+        const timerDisplay = document.getElementById('stream-timer');
 
         const recordButton = document.getElementById('record-button');
         const stopRecordingButton = document.getElementById('stop-recording-button');
@@ -123,6 +128,7 @@
         let mediaStream = null;
         let isVideoEnabled = true;
         let isAudioEnabled = true;
+        let startTime, timerInterval;
 
         let mediaRecorder = null;
         let recordedChunks = [];
@@ -285,7 +291,7 @@
             resetPeerConnections();
         }
 
-        function startRecording() {
+        function startRecording() {            
             if (mediaRecorder && mediaRecorder.state !== "inactive") {
                 console.log("Already recording.");
                 return;
@@ -337,8 +343,33 @@
             }
         }
 
-        startStreamButton.addEventListener('click', startBroadcast);
-        stopStreamButton.addEventListener('click', stopBroadcast);
+        function startTimer() {
+            startTime = Date.now();
+            timerInterval = setInterval(() => {
+                const elapsed = Date.now() - startTime;
+                const hours = String(Math.floor(elapsed / 3600000)).padStart(2, '0');
+                const minutes = String(Math.floor((elapsed % 3600000) / 60000)).padStart(2, '0');
+                const seconds = String(Math.floor((elapsed % 60000) / 1000)).padStart(2, '0');
+                timerDisplay.textContent = `${hours}:${minutes}:${seconds}`;
+            }, 1000);
+            timerDisplay.style.display = 'inline';
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            timerDisplay.style.display = 'none';
+        }
+
+        startStreamButton.addEventListener('click', () => {
+            startBroadcast();
+            startTimer();
+        });
+
+        stopStreamButton.addEventListener('click', () => {
+            stopBroadcast();
+            stopTimer();
+        });
+
         shareScreenButton.addEventListener('click', shareScreen);
         stopScreenShareButton.addEventListener('click', stopScreenShare);
         toggleVideoButton.addEventListener('click', toggleVideo);
