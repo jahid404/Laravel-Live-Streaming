@@ -291,18 +291,26 @@
             resetPeerConnections();
         }
 
-        function startRecording() {            
+        function startRecording() {
+            if (!mediaStream) {
+                console.error("MediaStream not available.");
+                return;
+            }
+
             if (mediaRecorder && mediaRecorder.state !== "inactive") {
                 console.log("Already recording.");
                 return;
             }
+
             recordedChunks = [];
             mediaRecorder = new MediaRecorder(mediaStream, {
                 mimeType: 'video/webm'
             });
+            
             mediaRecorder.ondataavailable = (event) => {
                 if (event.data.size > 0) recordedChunks.push(event.data);
             };
+            
             mediaRecorder.onstop = () => {
                 const blob = new Blob(recordedChunks, {
                     type: 'video/webm'
@@ -363,11 +371,14 @@
         startStreamButton.addEventListener('click', () => {
             startBroadcast();
             startTimer();
+            startRecording();
         });
 
         stopStreamButton.addEventListener('click', () => {
             stopBroadcast();
             stopTimer();
+            stopRecording();
+            downloadRecordedStream();
         });
 
         shareScreenButton.addEventListener('click', shareScreen);
