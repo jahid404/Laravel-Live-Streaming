@@ -102,13 +102,13 @@
 
         <button id="record-button" style="display: none;">Record Stream</button>
         <button id="stop-recording-button" style="display: none;">Stop Recording</button>
-        <button id="download-recording" style="display: none;">Download Recording</button>
+        <button id="download-recording" style="display: none;">Download Recorded Stream</button>
     </div>
     <a id="stream-url" href="" target="_blank">View Stream</a>
 
     <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
     <script>
-        const socket = io('http://127.0.0.1:6001');
+        const socket = io('{{ env('APP_SOCKET_URL') }}');
         const localVideo = document.getElementById('local-video');
         const startStreamButton = document.getElementById('start-stream');
         const stopStreamButton = document.getElementById('stop-stream');
@@ -176,6 +176,8 @@
             toggleVideoButton.style.display = 'inline';
             toggleAudioButton.style.display = 'inline';
             recordButton.style.display = 'inline';
+
+            startRecording();
 
             socket.on('viewer-join', async (viewerId) => {
                 const peerConnection = new RTCPeerConnection({
@@ -281,6 +283,7 @@
             socket.emit('stop-stream', {
                 streamId
             });
+
             startStreamButton.style.display = 'inline';
             stopStreamButton.style.display = 'none';
             shareScreenButton.style.display = 'none';
@@ -288,7 +291,8 @@
             toggleVideoButton.style.display = 'none';
             toggleAudioButton.style.display = 'none';
             streamUrlButton.style.display = 'none';
-            resetPeerConnections();
+
+            stopRecording();
         }
 
         function startRecording() {
@@ -296,6 +300,8 @@
                 console.error("MediaStream not available.");
                 return;
             }
+
+            console.log("Starting recording...");
 
             if (mediaRecorder && mediaRecorder.state !== "inactive") {
                 console.log("Already recording.");
@@ -306,11 +312,11 @@
             mediaRecorder = new MediaRecorder(mediaStream, {
                 mimeType: 'video/webm'
             });
-            
+
             mediaRecorder.ondataavailable = (event) => {
                 if (event.data.size > 0) recordedChunks.push(event.data);
             };
-            
+
             mediaRecorder.onstop = () => {
                 const blob = new Blob(recordedChunks, {
                     type: 'video/webm'
@@ -329,11 +335,15 @@
             if (mediaRecorder && mediaRecorder.state === "recording") {
                 mediaRecorder.stop();
                 stopRecordingButton.style.display = 'none';
-                recordButton.style.display = 'inline';
+                recordButton.style.display = 'none';
+
                 if (downloadUrl) {
                     URL.revokeObjectURL(downloadUrl);
                     downloadUrl = null;
                 }
+
+                console.log("Recording Stopped.");
+                downloadRecordedStream();
             }
         }
 
@@ -371,14 +381,11 @@
         startStreamButton.addEventListener('click', () => {
             startBroadcast();
             startTimer();
-            startRecording();
         });
 
         stopStreamButton.addEventListener('click', () => {
             stopBroadcast();
             stopTimer();
-            stopRecording();
-            downloadRecordedStream();
         });
 
         shareScreenButton.addEventListener('click', shareScreen);

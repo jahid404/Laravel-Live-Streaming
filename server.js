@@ -1,16 +1,36 @@
 import { Server } from 'socket.io';
+// import http from 'http';
 
 const io = new Server(6001, {
-    host: '0.0.0.0',
+    host: '::',
     cors: {
         origin: [
-            "http://127.0.0.1:8000"
+            "http://127.0.0.1:8000",
+            "http://192.168.0.106:8000",
         ],
         methods: ["GET", "POST"],
         allowedHeaders: ["Content-Type"],
         credentials: true
     }
 });
+
+/* const server = http.createServer();
+
+const io = new Server(server, {
+    cors: {
+        origin: [
+            "http://127.0.0.1:8000",
+            "http://192.168.0.106:8000",
+        ],
+        methods: ["GET", "POST"],
+        allowedHeaders: ["Content-Type"],
+        credentials: true
+    }
+});
+
+server.listen(6001, '0.0.0.0', () => {
+    console.log('Server is running on port 6001');
+}); */
 
 const streams = {};
 
@@ -69,7 +89,7 @@ io.on('connection', (socket) => {
 
         streams[streamId] = { broadcaster: socket.id, viewers: [] };
 
-        const streamUrl = `http://127.0.0.1:8000/stream/${streamId}`;
+        const streamUrl = `http://192.168.0.106:8000/stream/${streamId}`;
         console.log(`Stream started! Stream URL: ${streamUrl}`);
 
         socket.emit('stream-url', { streamUrl });

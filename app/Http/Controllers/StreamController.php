@@ -21,6 +21,6 @@ class StreamController extends Controller
 
     public function watchStream($streamId)
     {
-        return view('watch', compact('streamId'));
+        return view('watch_v2', compact('streamId'));
     }
 }

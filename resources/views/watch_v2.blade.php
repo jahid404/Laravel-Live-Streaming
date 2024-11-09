@@ -71,7 +71,7 @@
 
     <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
     <script>
-        const socket = io('http://127.0.0.1:6001');
+        const socket = io('{{ env('APP_SOCKET_URL') }}');
         const remoteVideo = document.getElementById('remote-video');
         const playButton = document.getElementById('play-button');
         const leaveButton = document.getElementById('leave-button');
