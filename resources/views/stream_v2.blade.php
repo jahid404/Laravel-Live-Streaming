@@ -323,7 +323,7 @@
             }
         }
 
-        downloadButton.addEventListener('click', () => {
+        function downloadRecordedStream() {
             if (downloadUrl) {
                 const date = new Date();
                 const formattedDate =
@@ -335,7 +335,7 @@
             } else {
                 console.log("No recording available for download.");
             }
-        });
+        }
 
         startStreamButton.addEventListener('click', startBroadcast);
         stopStreamButton.addEventListener('click', stopBroadcast);
@@ -345,8 +345,8 @@
         toggleAudioButton.addEventListener('click', toggleAudio);
         recordButton.addEventListener('click', startRecording);
         stopRecordingButton.addEventListener('click', stopRecording);
+        downloadButton.addEventListener('click', downloadRecordedStream);
     </script>
-
 </body>
 
 </html>
