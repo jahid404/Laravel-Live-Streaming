@@ -108,7 +108,7 @@
 
     <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
     <script>
-        const socket = io('{{ env('APP_SOCKET_URL') }}');
+        const socket = io('{{ env("APP_SOCKET_URL", "http://127.0.0.1:6001") }}');
         const localVideo = document.getElementById('local-video');
         const startStreamButton = document.getElementById('start-stream');
         const stopStreamButton = document.getElementById('stop-stream');
